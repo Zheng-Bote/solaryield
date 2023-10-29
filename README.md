@@ -33,12 +33,15 @@
 <br/>
 
 #### BRIEF: 
+<span id="brief"></span>
 read and consolidate Shelly Plug S consumption.csv
 
 ### VERSION: 
+<span id="version"></span>
 0.2.0
 
 ### DESC: 
+<span id="description"></span>
 C++20 program to read and consolidate Shelly Plug S consumption.csv.
 
 Output to terminal, CSV or JSON file.
@@ -46,6 +49,7 @@ Output to terminal, CSV or JSON file.
 Several entries for the same day will be accumulated.
 
 ### DEPENDENCIES: 
+<span id="dependencies"></span>
 #### cxxopts
 
 a lightweight C++ option parser library, supporting the standard GNU style syntax for options.
@@ -55,12 +59,15 @@ Source: https://github.com/jarro2783/cxxopts
 License: gpl2
 
 ### AUTHOR: 
+<span id="author"></span>
 ZHENG Robert
 
 ### SOURCE: 
+<span id="source"></span>
 https://github.com/Zheng-Bote/solaryield
 
 ### SYNTAX: 
+<span id="syntax"></span>
 Usage:
 ```
 ./shellyield -h
@@ -77,6 +84,7 @@ ShellYield [OPTION...]
 ```
 
 ### EXAMPLES: 
+<span id="examples"></span>
 ```
 ./shellyield --csv GH_Solar_0108202331082023_consumption.csv --writecsv ./new.csv
 ```
@@ -85,12 +93,14 @@ ShellYield [OPTION...]
 ```
 
 ### RETURNS: 
+<span id="returns"></span>
 ```
 0 => OK
 1 => NOK
 ```
 
 ### SETUP: 
+<span id="setup"></span>
 #### Debug:
 
 ```
@@ -116,6 +126,7 @@ gcc version 12.3.0 (Ubuntu 12.3.0-1ubuntu1~22.04)
 ```
 
 ### HISTORY:
+<span id="history"></span>
 
 > | Version | Date       | Developer | Comments           |
 > | ------- | ---------- | --------- | ------------------ |
@@ -123,6 +134,7 @@ gcc version 12.3.0 (Ubuntu 12.3.0-1ubuntu1~22.04)
 > | 0.2.0   | 2023-10-29 | RZheng    | added: JSON output |
 
 ## Contributing
+<span id="contributing"></span>
 
 Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
 
@@ -140,6 +152,7 @@ Don't forget to give the project a star! Thanks again!
 <!-- CONTACT -->
 
 ## Contact
+<span id="contact"></span>
 
 ZHENG Robert Zhèng Bó Tè 郑 伯特
 
