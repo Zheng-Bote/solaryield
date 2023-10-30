@@ -166,9 +166,25 @@ gcc version 12.3.0 (Ubuntu 12.3.0-1ubuntu1~22.04)
 - in your Shelly app, choose a month and export the consumption as csv-file
   <img src="https://raw.githubusercontent.com/Zheng-Bote/solaryield/main/Examples/shelly_plug_monthly_export.jpg" max-width="180px" height="auto" />
 - copy your csv-file to your linux machine
-- iwatch will automatically start the shellyield program
+- iwatch will automatically start the shellyield program:
+
+```
+<?xml version="1.0" ?>
+<!DOCTYPE config SYSTEM "/etc/iwatch/iwatch.dtd" >
+
+<config charset="utf-8">
+<guard email="dummy@localhost" name="iWatch"/>
+<watchlist>
+	<title>Solar</title>
+	<contactpoint email="dummy" name="Administrator"/>
+	<path type="single" alert="off" events="create,move" exec="/usr/bin/sleep 2; /Mounts/Usb/Solar/shellyield --writecsv /Mounts/Usb/Solar/Output/shellies.csv --writelog /Mounts/Usb/Solar/Log/shellies.log --csv %f">/Mounts/Usb/Solar/Input</path>
+</watchlist>
+</config>
+```
+
   <img src="https://raw.githubusercontent.com/Zheng-Bote/solaryield/main/Examples/iwatch.png"  width="100%" height="auto" />
-- example output
+
+- example output:
 
 ```
 2023-08-01,1363.290
@@ -204,7 +220,7 @@ gcc version 12.3.0 (Ubuntu 12.3.0-1ubuntu1~22.04)
 2023-08-31,2043.190
 ```
 
-- example logfile
+- example logfile:
 
 ```
 2023-10-30 16:07:44.713 INFO  [35911] [main@141] started: output/shellyield-0.3.0
