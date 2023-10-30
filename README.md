@@ -164,7 +164,7 @@ gcc version 12.3.0 (Ubuntu 12.3.0-1ubuntu1~22.04)
 <span id="scenario"></span>
 
 - in your Shelly app, choose a month and export the consumption as csv-file
-  <img src="https://raw.githubusercontent.com/Zheng-Bote/solaryield/main/Examples/shelly_plug_monthly_export.jpg" width="100%" max-width="180px" height="auto" />
+  <img src="https://raw.githubusercontent.com/Zheng-Bote/solaryield/main/Examples/shelly_plug_monthly_export.jpg" max-width="180px" height="auto" />
 - copy your csv-file to your linux machine
 - iwatch will automatically start the shellyield program
   <img src="https://raw.githubusercontent.com/Zheng-Bote/solaryield/main/Examples/iwatch.png"  width="100%" height="auto" />
