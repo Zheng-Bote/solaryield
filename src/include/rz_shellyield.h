@@ -8,8 +8,8 @@
 #include <algorithm>
 #include <map>
 #include <regex>
-
 #include <iomanip>
+#include <ctime>
 
 class ShellyYield
 {
@@ -35,8 +35,9 @@ public:
   virtual std::string &rtrim(std::string &s);
   virtual std::string &trim(std::string &s);
   virtual std::string rmLastNewline(std::string s);
+  virtual std::string formatKey(std::string key);
 
 private:
   const std::string *_inFile;
-  const std::string _VERSION = "0.1.0";
+  const std::string _VERSION = "0.2.0";
 };

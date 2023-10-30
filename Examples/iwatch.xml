@@ -1,0 +1,11 @@
+<?xml version="1.0" ?>
+<!DOCTYPE config SYSTEM "/etc/iwatch/iwatch.dtd" >
+
+<config charset="utf-8">
+<guard email="dummy@localhost" name="iWatch"/>
+<watchlist>
+	<title>Solar</title>
+	<contactpoint email="dummy" name="Administrator"/>
+	<path type="single" alert="off" events="create,move" exec="/usr/bin/sleep 2; /Mounts/Usb/Solar/shellyield --writecsv /Mounts/Usb/Solar/Output/shellies.csv --writelog /Mounts/Usb/Solar/Log/shellies.log --csv %f">/Mounts/Usb/Solar/Input</path>
+</watchlist>
+</config>

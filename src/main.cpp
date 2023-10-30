@@ -3,20 +3,25 @@ TITLE:        ShellYield
 
 BRIEF:        read and consolidate Shelly Plug S consumption.csv
 
-VERSION:      0.2.0
+VERSION:      0.3.0
 
 DESC:         C++20 program to read and consolidate Shelly Plug S consumption.csv.
               Output to terminal, CSV or JSON file.
               Several entries for the same day will be accumulated.
+
+AUTHOR:       ZHENG Robert
+
+SOURCE:       https://github.com/Zheng-Bote/solaryield
 
 DEPENDENCIES: cxxopts
               a lightweight C++ option parser library, supporting the standard GNU style syntax for options.
               Source: https://github.com/jarro2783/cxxopts
               License: gpl2
 
-AUTHOR:       ZHENG Robert
-
-SOURCE:       https://github.com/Zheng-Bote/solaryield
+              plog
+              Plog - portable, simple and extensible C++ logging library
+              Source: https://github.com/SergiusTheBest/plog
+              License: MIT
 
 SYNTAX:       Usage:
               ShellYield [OPTION...]
@@ -54,24 +59,39 @@ Version | Date       | Developer | Comments
 --------|------------|-----------|------------------------------------
 0.1.0   | 2023-10-28 | RZheng    | created                            |
 0.2.0   | 2023-10-29 | RZheng    | added: JSON output                 |
+0.3.0   | 2023-10-30 | RZheng    | added: logging                     |
 */
 
 #include <iostream>
+#include <filesystem>
 #include <string>
+
+#include <plog/Log.h>
+#include <plog/Initializers/RollingFileInitializer.h>
+#include <plog/Formatters/TxtFormatter.h>
+#include <plog/Appenders/ColorConsoleAppender.h>
 
 #include "lib/cxxopts.hpp"
 #include "include/rz_shellyield.h"
 
 using namespace std;
 
-const std::string VERSION = "0.2.0";
+const std::string VERSION = "0.3.0";
+
+// happy coding ^_^
+
+std::string getFilename(char &argv0)
+{
+  return std::filesystem::path(&argv0).stem();
+}
 
 int main(int argc, char *argv[])
 {
   std::string singleFile = "";
+  std::string logFile = getFilename(*argv[0]) + ".log";
 
   cxxopts::Options options("ShellYield", "collect Shelly yields");
-  options.add_options()("c,csv", "<pathTo/inputfile.csv>", cxxopts::value<std::string>())("l,list", "list values")("writecsv", "<pathTo/outputfile.csv>", cxxopts::value<std::string>())("writejson", "<pathTo/outputfile.json>", cxxopts::value<std::string>())("h,help", "Print usage")("v,version", "Version");
+  options.add_options()("c,csv", "<pathTo/inputfile.csv>", cxxopts::value<std::string>())("l,list", "list values")("writecsv", "<pathTo/outputfile.csv>", cxxopts::value<std::string>())("writejson", "<pathTo/outputfile.json>", cxxopts::value<std::string>())("writelog", "<pathTo/logfile.log>", cxxopts::value<std::string>())("h,help", "Print usage")("v,version", "Version");
 
   auto result = options.parse(argc, argv);
 
@@ -97,6 +117,11 @@ int main(int argc, char *argv[])
     exit(1);
   }
 
+  if (result.count("writelog"))
+  {
+    logFile = result["writelog"].as<std::string>();
+  }
+
   if (argc <= 1)
   {
     std::cout << "missing inputfile\n"
@@ -107,22 +132,14 @@ int main(int argc, char *argv[])
 
   // ok-la, let's do something
 
-  ShellyYield *shellyData = new ShellyYield(&singleFile);
-  // std::cout << shellyData->getVersion() << std::endl;
-  // std::cout << shellyData->getInFile() << std::endl;
+  plog::init(plog::debug, logFile.c_str(), 5000, 3);
 
-  // shitty
-  if (shellyData->isReadAble(&singleFile))
-  {
-    // std::cout << "is readable" << std::endl;
-    // std::cout << "inFile Perms: " << shellyData->getFilePerm(singleFile) << std::endl;
-  }
-  else
-  {
-    // std::cout << "is not readable" << std::endl;
-    // std::cout << "inFile Status: " << shellyData->getInFileType() << std::endl;
-    // std::cout << "inFile Perms: " << shellyData->getFilePerm(singleFile) << std::endl;
-  }
+  plog::ColorConsoleAppender<plog::TxtFormatter> consoleAppender;
+  plog::get()->addAppender(&consoleAppender);
+
+  ShellyYield *shellyData = new ShellyYield(&singleFile);
+  PLOG_INFO << "started: " << argv[0] << "-" << VERSION;
+  PLOG_INFO << "Inputfile: " << shellyData->getInFile();
 
   std::map<std::string, float> mapKeys = {};
 
@@ -139,12 +156,12 @@ int main(int argc, char *argv[])
     std::string csvOutFile = result["writecsv"].as<std::string>();
     if (shellyData->writeCSV(mapKeys, csvOutFile))
     {
-      // std::cout << "OK: " << csvOutFile << std::endl;
+      PLOG_INFO << "OK: " << csvOutFile;
       exit(EXIT_SUCCESS);
     }
     else
     {
-      // std::cout << "NOK: " << csvOutFile << std::endl;
+      PLOG_ERROR << "NOK: " << csvOutFile;
       exit(EXIT_FAILURE);
     }
   }
@@ -155,12 +172,12 @@ int main(int argc, char *argv[])
     std::string jsonOutFile = result["writejson"].as<std::string>();
     if (shellyData->writeJson(mapKeys, jsonOutFile))
     {
-      // std::cout << "OK: " << jsonOutFile << std::endl;
+      PLOG_INFO << "OK: " << jsonOutFile;
       exit(EXIT_SUCCESS);
     }
     else
     {
-      // std::cout << "NOK: " << jsonOutFile << std::endl;
+      PLOG_ERROR << "NOK: " << jsonOutFile;
       exit(EXIT_FAILURE);
     }
   }

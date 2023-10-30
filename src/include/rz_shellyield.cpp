@@ -189,6 +189,28 @@ std::string ShellyYield::rmLastNewline(std::string s)
   return s;
 }
 
+std::string ShellyYield::formatKey(std::string key)
+{
+  // input 01.Aug
+  // output: 2023-08-01
+  std::map<std::string, std::string> mapKeys = {{"Jan", "01"}, {"Feb", "02"}, {"Mar", "03"}, {"Apr", "04"}, {"Mai", "05"}, {"Jun", "06"}, {"Jul", "07"}, {"Aug", "08"}, {"Sep", "09"}, {"Okt", "10"}, {"Nov", "11"}, {"Dez", "12"}};
+  std::string day = "";
+  std::string month = "";
+  std::string year = "";
+  std::string newKey = "";
+
+  std::stringstream ss(key);
+  std::getline(ss, day, '.');
+  std::getline(ss, month, '.');
+
+  time_t now = time(0);
+  tm *ltm = localtime(&now);
+  year = std::to_string(1900 + ltm->tm_year);
+  newKey = year + "-" + mapKeys[month] + "-" + day;
+
+  return newKey;
+}
+
 void ShellyYield::parseFileToMapKey(std::map<std::string, float> &mapKeys, std::string pathToFile)
 {
   std::ifstream ifs;
@@ -215,6 +237,10 @@ void ShellyYield::parseFileToMapKey(std::map<std::string, float> &mapKeys, std::
         std::stringstream ss(str);
         std::getline(ss, key, ',');
         key = trim(key);
+
+        // format key
+        key = formatKey(key);
+
         std::getline(ss, valStr, ',');
         valStr = trim(valStr);
 
