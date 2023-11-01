@@ -331,17 +331,18 @@ bool ShellyYield::writeJson(std::map<std::string, float> &mapKeys, std::string &
 
   if (ofs.is_open())
   {
-    ofs << "{";
+    ofs << "[";
     for (auto const &[key, val] : mapKeys)
     {
       counter++;
-      ofs << "\"" << key << "\": \"" << std::fixed << std::setprecision(3) << val << "\"";
+
+      ofs << "{\"yyyymmdd\":\"" << key << "\",\"wh\":\"" << std::fixed << std::setprecision(3) << val << "\"}";
       if (counter < mapSize)
       {
         ofs << ",";
       }
     }
-    ofs << "}";
+    ofs << "]";
     ofs.close();
     return true;
   }

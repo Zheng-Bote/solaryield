@@ -41,7 +41,7 @@ read and consolidate Shelly Plug S consumption.csv
 ### VERSION:
 
 <span id="version"></span>
-1.0.0
+1.0.1
 
 ### DESC:
 
@@ -235,15 +235,20 @@ gcc version 12.3.0 (Ubuntu 12.3.0-1ubuntu1~22.04)
 2023-10-30 16:08:40.086 INFO  [36007] [main@175] OK: Outputfile: Examples/new.json
 ```
 
+- example Graph:
+
+<img src="https://raw.githubusercontent.com/Zheng-Bote/solaryield/main/Examples/graph.png"  width="100%" height="auto" />
+
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 ### HISTORY:
 
 <span id="history"></span>
 
-> | Version | Date       | Developer | Comments |
-> | ------- | ---------- | --------- | -------- |
-> | 1.0.0   | 2023-10-28 | RZheng    | created  |
+> | Version | Date       | Developer | Comments      |
+> | ------- | ---------- | --------- | ------------- |
+> | 1.0.0   | 2023-10-28 | RZheng    | created       |
+> | 1.0.1   | 2023-11-01 | RZheng    | JSON modified |
 
 ## Contributing
 
