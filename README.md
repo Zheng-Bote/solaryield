@@ -41,7 +41,7 @@ read and consolidate Shelly Plug S consumption.csv
 ### VERSION:
 
 <span id="version"></span>
-0.3.0
+1.0.0
 
 ### DESC:
 
@@ -223,12 +223,12 @@ gcc version 12.3.0 (Ubuntu 12.3.0-1ubuntu1~22.04)
 - example logfile:
 
 ```
-2023-10-30 16:07:44.713 INFO  [35911] [main@141] started: output/shellyield-0.3.0
-2023-10-30 16:07:44.713 INFO  [35911] [main@142] Inputfile: Examples/GH_Solar_0108202331082023_consumption.csv
-2023-10-30 16:07:44.714 INFO  [35911] [main@159] OK: Examples/new.csv
-2023-10-30 16:08:40.086 INFO  [36007] [main@141] started: output/shellyield-0.3.0
-2023-10-30 16:08:40.086 INFO  [36007] [main@142] Inputfile: Examples/GH_Solar_0108202331082023_consumption.csv
-2023-10-30 16:08:40.086 INFO  [36007] [main@175] OK: Examples/new.json
+2023-11-01 11:58:10.713 INFO  [35911] [main@141] started: output/shellyield-0.3.0
+2023-11-01 11:58:10.631 INFO  [188327] [main@142] OK: Inputfile: Examples/GH_Solar_0108202331082023_consumption.csv
+2023-11-01 11:58:10.714 INFO  [35911] [main@159] OK: Outputfile: Examples/new.csv
+2023-11-01 11:58:10.086 INFO  [36007] [main@141] started: output/shellyield-0.3.0
+2023-11-01 11:58:10.086 INFO  [36007] [main@142] OK: Inputfile: Examples/GH_Solar_0108202331082023_consumption.csv
+2023-10-30 16:08:40.086 INFO  [36007] [main@175] OK: Outputfile: Examples/new.json
 ```
 
 <p align="right">(<a href="#top">back to top</a>)</p>
@@ -237,11 +237,9 @@ gcc version 12.3.0 (Ubuntu 12.3.0-1ubuntu1~22.04)
 
 <span id="history"></span>
 
-> | Version | Date       | Developer | Comments           |
-> | ------- | ---------- | --------- | ------------------ |
-> | 0.1.0   | 2023-10-28 | RZheng    | created            |
-> | 0.2.0   | 2023-10-29 | RZheng    | added: JSON output |
-> | 0.3.0   | 2023-10-30 | RZheng    | added: logging     |
+> | Version | Date       | Developer | Comments |
+> | ------- | ---------- | --------- | -------- |
+> | 1.0.0   | 2023-10-28 | RZheng    | created  |
 
 ## Contributing
 
