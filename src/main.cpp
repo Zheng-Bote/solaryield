@@ -57,9 +57,7 @@ SETUP:        Debug:
 HISTORY:
 Version | Date       | Developer | Comments
 --------|------------|-----------|------------------------------------
-0.1.0   | 2023-10-28 | RZheng    | created                            |
-0.2.0   | 2023-10-29 | RZheng    | added: JSON output                 |
-0.3.0   | 2023-10-30 | RZheng    | added: logging                     |
+1.0.0   | 2023-10-28 | RZheng    | created                            |
 */
 
 #include <iostream>
@@ -76,7 +74,7 @@ Version | Date       | Developer | Comments
 
 using namespace std;
 
-const std::string VERSION = "0.3.0";
+const std::string VERSION = "1.0.0";
 
 // happy coding ^_^
 
@@ -139,8 +137,15 @@ int main(int argc, char *argv[])
 
   ShellyYield *shellyData = new ShellyYield(&singleFile);
   PLOG_INFO << "started: " << argv[0] << "-" << VERSION;
-  PLOG_INFO << "Inputfile: " << shellyData->getInFile();
-
+  if (shellyData->checkFileExtension(&singleFile, ".csv"))
+  {
+    PLOG_INFO << "OK: Inputfile: " << shellyData->getInFile();
+  }
+  else
+  {
+    PLOG_ERROR << "NOK: Inputfile not a .csv: " << shellyData->getInFile();
+    exit(EXIT_FAILURE);
+  }
   std::map<std::string, float> mapKeys = {};
 
   shellyData->parseFileToMapKey(mapKeys, singleFile);
@@ -156,12 +161,12 @@ int main(int argc, char *argv[])
     std::string csvOutFile = result["writecsv"].as<std::string>();
     if (shellyData->writeCSV(mapKeys, csvOutFile))
     {
-      PLOG_INFO << "OK: " << csvOutFile;
+      PLOG_INFO << "OK: Outputfile: " << csvOutFile;
       exit(EXIT_SUCCESS);
     }
     else
     {
-      PLOG_ERROR << "NOK: " << csvOutFile;
+      PLOG_ERROR << "NOK: Outputfile: " << csvOutFile;
       exit(EXIT_FAILURE);
     }
   }
@@ -172,12 +177,12 @@ int main(int argc, char *argv[])
     std::string jsonOutFile = result["writejson"].as<std::string>();
     if (shellyData->writeJson(mapKeys, jsonOutFile))
     {
-      PLOG_INFO << "OK: " << jsonOutFile;
+      PLOG_INFO << "OK: Outputfile: " << jsonOutFile;
       exit(EXIT_SUCCESS);
     }
     else
     {
-      PLOG_ERROR << "NOK: " << jsonOutFile;
+      PLOG_ERROR << "NOK: Outputfile: " << jsonOutFile;
       exit(EXIT_FAILURE);
     }
   }

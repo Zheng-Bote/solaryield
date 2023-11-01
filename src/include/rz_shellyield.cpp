@@ -128,6 +128,20 @@ bool ShellyYield::isReadAble(const std::string *pathToFile)
   return isReadAble;
 }
 
+bool ShellyYield::checkFileExtension(const std::string *pathToFile, std::string extension)
+{
+  namespace fs = std::filesystem;
+  std::string fileExtension = fs::path(*pathToFile).extension();
+  if (fileExtension.compare(extension) == 0)
+  {
+    return true;
+  }
+  else
+  {
+    return false;
+  }
+}
+
 /**
  * @brief ltrim(std::string &s)
  *
@@ -191,6 +205,12 @@ std::string ShellyYield::rmLastNewline(std::string s)
 
 std::string ShellyYield::formatKey(std::string key)
 {
+  const std::regex regex_yyyymmdd("(\\d){4}-([\\d]){2}-(\\d){2}");
+  if (std::regex_match(key, regex_yyyymmdd))
+  {
+    return key;
+  }
+
   // input 01.Aug
   // output: 2023-08-01
   std::map<std::string, std::string> mapKeys = {{"Jan", "01"}, {"Feb", "02"}, {"Mar", "03"}, {"Apr", "04"}, {"Mai", "05"}, {"Jun", "06"}, {"Jul", "07"}, {"Aug", "08"}, {"Sep", "09"}, {"Okt", "10"}, {"Nov", "11"}, {"Dez", "12"}};

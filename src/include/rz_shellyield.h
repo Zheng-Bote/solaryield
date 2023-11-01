@@ -25,6 +25,7 @@ public:
   virtual std::string getFilePerm(std::string pathToFile);
   virtual std::string getFilePerms(std::filesystem::perms pathToFile);
   virtual bool isReadAble(const std::string *pathToFile);
+  virtual bool checkFileExtension(const std::string *pathToFile, std::string extension);
 
   virtual void parseFileToMapKey(std::map<std::string, float> &mapKeys, std::string pathToFile);
   virtual void displayMap(std::map<std::string, float> &mapKeys);
@@ -39,5 +40,5 @@ public:
 
 private:
   const std::string *_inFile;
-  const std::string _VERSION = "0.2.0";
+  const std::string _VERSION = "0.3.0";
 };
