@@ -3,7 +3,7 @@ TITLE:        ShellYield
 
 BRIEF:        read and consolidate Shelly Plug S consumption.csv
 
-VERSION:      1.0.2
+VERSION:      2.0.0
 
 DESC:         C++20 program to read and consolidate Shelly Plug S consumption.csv.
               Output to terminal, CSV or JSON file.
@@ -59,7 +59,7 @@ Version | Date       | Developer | Comments
 --------|------------|-----------|------------------------------------
 1.0.0   | 2023-10-28 | RZheng    | created                            |
 1.0.1   | 2023-11-01 | RZheng    | JSON modified                      |
-1.0.2   | 2024-04-20 | RZheng    | JSON modified                      |
+2.0.0   | 2024-04-20 | RZheng    | JSON modified                      |
 */
 
 #include <iostream>
@@ -76,7 +76,7 @@ Version | Date       | Developer | Comments
 
 using namespace std;
 
-const std::string VERSION = "1.0.2";
+const std::string VERSION = "2.0.0";
 
 // happy coding ^_^
 
@@ -178,7 +178,7 @@ int main(int argc, char *argv[])
 
     std::string jsonOutFile = result["writejson"].as<std::string>();
     // if (shellyData->writeJson(mapKeys, jsonOutFile))
-    if (shellyData->writeNewJson(mapKeys, jsonOutFile))
+    if (shellyData->writeNewJson3(mapKeys, jsonOutFile))
     {
       PLOG_INFO << "OK: Outputfile: " << jsonOutFile;
       exit(EXIT_SUCCESS);
