@@ -14,6 +14,8 @@
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
 
+/* 1.0.2 */
+
 class ShellyYield
 {
 public:

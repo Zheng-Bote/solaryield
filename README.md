@@ -2,7 +2,7 @@
 <br />
 <div align="center">
   <h3 align="center">ShellYield</h3>
-        read and consolidate Shelly Plug S consumption.csv
+        read and consolidate Shelly Plug consumption.csv
 <br/>
 <br/>
   <a href="https://github.com/Zheng-Bote/solaryield/issues">Report Bug</a>

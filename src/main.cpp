@@ -59,6 +59,7 @@ Version | Date       | Developer | Comments
 --------|------------|-----------|------------------------------------
 1.0.0   | 2023-10-28 | RZheng    | created                            |
 1.0.1   | 2023-11-01 | RZheng    | JSON modified                      |
+1.0.2   | 2024-04-20 | RZheng    | JSON modified                      |
 */
 
 #include <iostream>
@@ -75,7 +76,7 @@ Version | Date       | Developer | Comments
 
 using namespace std;
 
-const std::string VERSION = "1.0.1";
+const std::string VERSION = "1.0.2";
 
 // happy coding ^_^
 
