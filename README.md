@@ -36,17 +36,17 @@
 #### BRIEF:
 
 <span id="brief"></span>
-read and consolidate Shelly Plug S consumption.csv
+read and consolidate Shelly Plug consumption.csv
 
 ### VERSION:
 
 <span id="version"></span>
-1.0.1
+1.0.2
 
 ### DESC:
 
 <span id="description"></span>
-C++20 program to read and consolidate Shelly Plug S consumption.csv.
+C++20 program to read and consolidate Shelly Plug consumption.csv.
 
 Output to terminal, CSV or JSON file.
 
@@ -109,12 +109,26 @@ ShellYield [OPTION...]
 
 <span id="examples"></span>
 
+- cleanup to csv
+
 ```
 ./shellyield --csv GH_Solar_0108202331082023_consumption.csv --writecsv ./new.csv
 ```
 
+- cleanup to json
+
 ```
 ./shellyield --csv GH_Solar_0108202331082023_consumption.csv --writejson ./new.json
+```
+
+- add several csv (eg. several Shelly Plugs from same month) to clean csv and cumulated json
+
+```
+./shellyield --csv GH_Solar-1_0108202331082023_consumption.csv --writecsv ./GH_Solar_2023.csv
+
+./shellyield --csv GH_Solar-2_0108202331082023_consumption.csv --writecsv ./GH_Solar_2023.csv
+
+./shellyield --csv ./GH_Solar_2023.csv --writejson ./GH_Solar_2023.json
 ```
 
 ### RETURNS:
@@ -188,7 +202,7 @@ gcc version 12.3.0 (Ubuntu 12.3.0-1ubuntu1~22.04)
 
   <img src="https://raw.githubusercontent.com/Zheng-Bote/solaryield/main/Examples/iwatch.png"  width="100%" height="auto" />
 
-- example output:
+- example output (csv):
 
 ```
 2023-08-01,1363.290
@@ -224,6 +238,85 @@ gcc version 12.3.0 (Ubuntu 12.3.0-1ubuntu1~22.04)
 2023-08-31,2043.190
 ```
 
+- example output (json):
+
+```
+{
+    "2023": {
+        "11": [
+            {
+                "10": 1643.3699951171875,
+                "11": 1243.0899658203125,
+                "12": 381.1700134277344,
+                "13": 132.63999938964844,
+                "14": 199.4600067138672,
+                "15": 292.6400146484375,
+                "16": 344.4800109863281,
+                "17": 359.7099914550781,
+                "18": 572.8800048828125,
+                "19": 1137.3399658203125,
+                "20": 1108.31005859375,
+                "21": 1068.510009765625,
+                "22": 112.25,
+                "23": 553.9000244140625,
+                "24": 141.5800018310547,
+                "25": 197.47999572753906,
+                "26": 91.51000213623047,
+                "27": 301.95001220703125,
+                "28": 109.2699966430664,
+                "29": 85.20999908447266,
+                "30": 30.790000915527344,
+                "31": 2043.18994140625,
+                "01": 1527.3199462890625,
+                "02": 416.3500061035156,
+                "03": 888.7000122070312,
+                "04": 1059.699951171875,
+                "05": 1304.72998046875,
+                "06": 645.5,
+                "07": 741.3099975585938,
+                "08": 513.510009765625,
+                "09": 506.75
+            }
+        ],
+        "08": [
+            {
+                "10": 3496.43994140625,
+                "11": 3649.010009765625,
+                "12": 2967.77001953125,
+                "13": 3179.719970703125,
+                "14": 3414.0400390625,
+                "15": 1521.9200439453125,
+                "16": 1511.1199951171875,
+                "17": 3413.260009765625,
+                "18": 3525.139892578125,
+                "19": 3394.840087890625,
+                "20": 3577.6201171875,
+                "21": 3511.590087890625,
+                "22": 2656.18994140625,
+                "23": 3377.280029296875,
+                "24": 3376.590087890625,
+                "25": 2267.050048828125,
+                "26": 2062.610107421875,
+                "27": 556.3699951171875,
+                "28": 743.9099731445312,
+                "29": 693.8099975585938,
+                "30": 2048.360107421875,
+                "31": 2043.18994140625,
+                "01": 1363.2900390625,
+                "02": 2596.5,
+                "03": 3572.159912109375,
+                "04": 1889.2099609375,
+                "05": 682.1400146484375,
+                "06": 1757.1700439453125,
+                "07": 2030.4300537109375,
+                "08": 2830.22998046875,
+                "09": 845.77001953125
+            }
+        ]
+    }
+}
+```
+
 - example logfile:
 
 ```
@@ -249,6 +342,7 @@ gcc version 12.3.0 (Ubuntu 12.3.0-1ubuntu1~22.04)
 > | ------- | ---------- | --------- | ------------- |
 > | 1.0.0   | 2023-10-28 | RZheng    | created       |
 > | 1.0.1   | 2023-11-01 | RZheng    | JSON modified |
+> | 1.0.2   | 2024-04-20 | RZheng    | JSON modified |
 
 ## Contributing
 

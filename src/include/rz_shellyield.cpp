@@ -286,6 +286,8 @@ void ShellyYield::parseFileToMapKey(std::map<std::string, float> &mapKeys, std::
 
 void ShellyYield::displayMap(std::map<std::string, float> &mapKeys)
 {
+  float totalVals = 0;
+
   std::cout << "==Display Map==" << std::endl;
   for (auto const &[key, val] : mapKeys)
   {
@@ -294,7 +296,9 @@ void ShellyYield::displayMap(std::map<std::string, float> &mapKeys)
       // std::cout << key << ":" << val << std::endl;
       std::cout << std::left << std::setfill('.') << std::setw(7) << key << std::right << std::setfill('.') << std::setw(15) << std::fixed << std::setprecision(3) << val << std::endl;
     }
+    totalVals += val;
   }
+  std::cout << std::left << std::setfill('.') << std::setw(10) << "total:" << std::right << std::setfill('.') << std::setw(15) << std::fixed << std::setprecision(3) << totalVals << " W (" << totalVals / 1000 << " kW)" << std::endl;
 }
 
 bool ShellyYield::writeCSV(std::map<std::string, float> &mapKeys, std::string pathToFile)
@@ -343,6 +347,43 @@ bool ShellyYield::writeJson(std::map<std::string, float> &mapKeys, std::string &
       }
     }
     ofs << "]";
+    ofs.close();
+    return true;
+  }
+  else
+  {
+    return false;
+  }
+}
+
+bool ShellyYield::writeNewJson(std::map<std::string, float> &mapKeys, std::string &pathToFile)
+{
+  std::ofstream ofs;
+
+  ofs.open(pathToFile, std::ios::out);
+
+  if (ofs.is_open())
+  {
+    json j_nested_year = json::object();
+    json j_nested_month = json::object();
+    json j_days = json::object();
+    std::string year, month, day = "0";
+
+    for (auto const &[key, val] : mapKeys)
+    {
+      std::stringstream ss(key);
+      std::getline(ss, year, '-');
+      std::getline(ss, month, '-');
+      std::getline(ss, day, '-');
+
+      j_days[day] = val;
+
+      j_nested_year[year][month] = {j_days};
+
+      // ofs << j_nested_year;
+    }
+    ofs << j_nested_year;
+
     ofs.close();
     return true;
   }
