@@ -43,10 +43,14 @@ read and consolidate Shelly Plug consumption.csv
 <span id="version"></span>
 3.0.0
 
+### Status
+
+![ops](https://img.shields.io/badge/Status-usable-green)
+
 ### DESC:
 
 <span id="description"></span>
-C++20 program to read and consolidate Shelly Plug consumption.csv.
+C++20 program to read, clean and consolidate Shelly Plug consumption.csv.
 
 Output to terminal, CSV or JSON file.
 
