@@ -161,6 +161,14 @@ g++-12 -std=c++20 -O3 -m64 -Wall -Wextra -Wpedantic -Wshadow -Wconversion -c -MM
 g++-12 -std=c++20 -O3 -m64 -Wall -Wextra -Wpedantic -Wshadow -Wconversion  -o output/shellyield src/main.o src/include/rz_shellyield.o
 ```
 
+**_see also_**
+
+Makefile
+
+```
+./make
+```
+
 #### Binary:
 
 compiled on:
@@ -274,7 +282,7 @@ gcc version 12.3.0 (Ubuntu 12.3.0-1ubuntu1~22.04)
 
 - example Graph:
 
-see [https://github.com/Zheng-Bote/solargraph](Angular webapp to visualize ShellYield json)
+see <a href="https://github.com/Zheng-Bote/solargraph" alt="solargraph" title="https://github.com/Zheng-Bote/solargraph">Angular webapp to visualize ShellYield json</a>
 
 <img src="https://raw.githubusercontent.com/Zheng-Bote/solaryield/main/Examples/graph.png"  width="100%" height="auto" />
 
