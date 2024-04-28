@@ -1,6 +1,6 @@
 #include "rz_shellyield.h"
 
-/* 2.0.0 */
+/* 3.0. */
 
 /// @brief
 /// @param inFile
@@ -207,7 +207,7 @@ std::string ShellyYield::rmLastNewline(std::string s)
 
 std::string ShellyYield::formatKey(std::string key)
 {
-  const std::regex regex_yyyymmdd("(\\d){4}-([\\d]){2}-(\\d){2}");
+  const std::regex regex_yyyymmdd("(\\d){4}-([\\d]){2}-([\\d]){2}");
   if (std::regex_match(key, regex_yyyymmdd))
   {
     return key;
@@ -222,13 +222,12 @@ std::string ShellyYield::formatKey(std::string key)
   std::string newKey = "";
 
   std::stringstream ss(key);
-  std::getline(ss, day, '.');
-  std::getline(ss, month, '.');
+  std::getline(ss, day, '/');
+  std::getline(ss, month, '/');
+  std::getline(ss, year, '/');
 
-  time_t now = time(0);
-  tm *ltm = localtime(&now);
-  year = std::to_string(1900 + ltm->tm_year);
-  newKey = year + "-" + mapKeys[month] + "-" + day;
+  newKey = year + "-" + month + "-" + day;
+  std::cout << "formatKey: " << newKey << std::endl;
 
   return newKey;
 }
@@ -244,8 +243,6 @@ void ShellyYield::parseFileToMapKey(std::map<std::string, float> &mapKeys, std::
 {
   std::ifstream ifs;
   std::string str;
-  std::string key, valStr;
-  float val;
 
   ifs.open(pathToFile, std::ios::in);
 
@@ -253,27 +250,62 @@ void ShellyYield::parseFileToMapKey(std::map<std::string, float> &mapKeys, std::
   {
     while (!ifs.eof())
     {
-      key = "";
-      valStr = "";
-      val = 0.0;
+      std::string key, valStr = "";
+      float val = 0.0;
+      std::string day = "";
+      std::string month = "";
+      std::string year = "";
 
+      const std::regex regex_ddmmyyyy("(\\d){2}/(\\d){2}/(\\d){4}");
+      const std::regex regex_yyyymmdd("(\\d){4}-(\\d){2}-(\\d){2}");
       std::getline(ifs, str);
       str = trim(str);
       const std::regex regex_verbrauch(".*Verbrauch.*");
       const std::regex regex_zeitwh(".*Zeit, Wh.*");
       if (str.length() > 0 && str.compare(" Verbrauch") != 0 && str.compare("Zeit, Wh") != 0 && !std::regex_match(str, regex_verbrauch) && !std::regex_match(str, regex_zeitwh))
       {
+        // 01/02/2024 00:00 , 480.69
+        // 2024-01-01,279.150
         std::stringstream ss(str);
+
         std::getline(ss, key, ',');
         key = trim(key);
 
-        // format key
-        key = formatKey(key);
+        std::string delimiter = " ";
+        std::string token = key.substr(0, key.find(delimiter));
 
-        std::getline(ss, valStr, ',');
-        valStr = trim(valStr);
+        if (std::regex_match(token, regex_ddmmyyyy))
+        {
+          std::stringstream dt(token);
+          std::getline(dt, day, '/');
+          std::getline(dt, month, '/');
+          std::getline(dt, year, '/');
 
-        val = std::stof(valStr);
+          std::stringstream sb(str);
+          while (std::getline(sb, valStr, ' '))
+          {
+            // std::cout << "valStr: " << valStr << std::endl;
+          }
+          valStr = trim(valStr);
+          val = std::stof(valStr);
+        }
+        else if (std::regex_match(token, regex_yyyymmdd))
+        {
+          std::stringstream dt(token);
+          std::getline(dt, year, '-');
+          std::getline(dt, month, '-');
+          std::getline(dt, day, '-');
+
+          std::stringstream sb(str);
+          while (std::getline(sb, valStr, ','))
+          {
+            // std::cout << "valStr: " << valStr << std::endl;
+          }
+          valStr = trim(valStr);
+          val = std::stof(valStr);
+        }
+
+        key = year + "-" + month + "-" + day;
 
         if (mapKeys.contains(key))
         {
@@ -335,119 +367,6 @@ bool ShellyYield::writeCSV(std::map<std::string, float> &mapKeys, std::string pa
 
 bool ShellyYield::writeJson(std::map<std::string, float> &mapKeys, std::string &pathToFile)
 {
-  long unsigned int counter = 0;
-  std::string s{};
-  long unsigned int mapSize = mapKeys.size();
-  std::ofstream ofs;
-
-  ofs.open(pathToFile, std::ios::app);
-
-  if (ofs.is_open())
-  {
-    ofs << "[";
-    for (auto const &[key, val] : mapKeys)
-    {
-      counter++;
-
-      ofs << "{\"yyyymmdd\":\"" << key << "\",\"wh\":\"" << std::fixed << std::setprecision(3) << val << "\"}";
-      if (counter < mapSize)
-      {
-        ofs << ",";
-      }
-    }
-    ofs << "]";
-    ofs.close();
-    return true;
-  }
-  else
-  {
-    return false;
-  }
-}
-
-bool ShellyYield::writeJson2(std::map<std::string, float> &mapKeys, std::string &pathToFile)
-{
-  long unsigned int counter = 0;
-  std::string s{};
-  std::string year, months = "";
-  long unsigned int mapSize = mapKeys.size();
-  std::ofstream ofs;
-
-  ofs.open(pathToFile, std::ios::app);
-
-  if (ofs.is_open())
-  {
-    ofs << "[";
-    for (auto const &[key, val] : mapKeys)
-    {
-      counter++;
-      if (ShellyYield::formatKey2(key, 0).compare(year) == 0)
-      {
-        year = ShellyYield::formatKey2(key, 0);
-        ofs << "{\"year\":\"" << year << "\",\"months\": [{";
-      }
-      if (ShellyYield::formatKey2(key, 1).compare(months) == 0)
-      {
-        months = ShellyYield::formatKey2(key, 1);
-        ofs << "{\"month\":\"" << ShellyYield::formatKey2(key, 1) << "\",\"days\":[";
-      }
-
-      ofs << "{\"day\": \"" << ShellyYield::formatKey2(key, 2) << "\",\"val\":\"" << val << "\"}";
-
-      if (counter < mapSize)
-      {
-        ofs << ",";
-      }
-    }
-    ofs << "]";
-    ofs.close();
-    return true;
-  }
-  else
-  {
-    return false;
-  }
-}
-
-bool ShellyYield::writeNewJson(std::map<std::string, float> &mapKeys, std::string &pathToFile)
-{
-  std::ofstream ofs;
-
-  ofs.open(pathToFile, std::ios::out);
-
-  if (ofs.is_open())
-  {
-    json j_nested_year = json::object();
-    json j_nested_month = json::object();
-    json j_days = json::object();
-    std::string year, month, day = "0";
-
-    for (auto const &[key, val] : mapKeys)
-    {
-      std::stringstream ss(key);
-      std::getline(ss, year, '-');
-      std::getline(ss, month, '-');
-      std::getline(ss, day, '-');
-
-      j_days[day] = val;
-
-      j_nested_year[year][month] = {j_days};
-
-      // ofs << j_nested_year;
-    }
-    ofs << j_nested_year;
-
-    ofs.close();
-    return true;
-  }
-  else
-  {
-    return false;
-  }
-}
-
-bool ShellyYield::writeNewJson3(std::map<std::string, float> &mapKeys, std::string &pathToFile)
-{
   std::ofstream ofs;
 
   std::map<std::string, std::string> mapMonths = {{"Jan", "01"}, {"Feb", "02"}, {"Mar", "03"}, {"Apr", "04"}, {"Mai", "05"}, {"Jun", "06"}, {"Jul", "07"}, {"Aug", "08"}, {"Sep", "09"}, {"Okt", "10"}, {"Nov", "11"}, {"Dez", "12"}};
@@ -464,9 +383,10 @@ bool ShellyYield::writeNewJson3(std::map<std::string, float> &mapKeys, std::stri
     json j_arr_days = json::array();
     json j_obj;
 
-    std::string val = "1889.2099609375";
-
+    float totalVals = 0;
     std::string year, month, day = "0";
+
+    // std::cout << std::left << std::setfill('.') << std::setw(10) << "total:" << std::right << std::setfill('.') << std::setw(15) << std::fixed << std::setprecision(3) << totalVals << " W (" << totalVals / 1000 << " kW)" << std::endl;
 
     for (auto const &[key, val] : mapKeys)
     {
@@ -480,79 +400,19 @@ bool ShellyYield::writeNewJson3(std::map<std::string, float> &mapKeys, std::stri
               {"day", day},
               {"val", val}};
       j_arr_days.push_back(j_obj);
+      totalVals += val;
     }
 
     j_obj =
         {
             {"month", month},
+            {"watt_per_month", totalVals},
             {"days", j_arr_days}};
     j_arr_months.push_back(j_obj);
 
     j_obj =
         {
             {"year", year},
-            {"months", j_arr_months}};
-    j_arr_years.push_back(j_obj);
-
-    j = j_arr_years;
-    ofs << j;
-    ofs.close();
-    return true;
-  }
-  else
-  {
-    return false;
-  }
-}
-
-bool ShellyYield::writeNewJson2(std::map<std::string, float> &mapKeys, std::string &pathToFile)
-{
-  std::ofstream ofs;
-
-  std::map<std::string, std::string> mapMonths = {{"Jan", "01"}, {"Feb", "02"}, {"Mar", "03"}, {"Apr", "04"}, {"Mai", "05"}, {"Jun", "06"}, {"Jul", "07"}, {"Aug", "08"}, {"Sep", "09"}, {"Okt", "10"}, {"Nov", "11"}, {"Dez", "12"}};
-  std::list<int> listDays = {1, 2, 3, 4, 5};
-
-  ofs.open(pathToFile, std::ios::out);
-
-  if (ofs.is_open())
-  {
-
-    json j;
-    json j_arr_years = json::array();
-    json j_arr_months = json::array();
-    json j_arr_days = json::array();
-    json j_obj;
-
-    std::string day = "01";
-    std::string val = "1889.2099609375";
-
-    int count{100};
-    for (std::list<int>::iterator it = listDays.begin(); it != listDays.end(); ++it)
-    {
-      j_obj =
-          {
-              {"day", *it},
-              {"val", count++}};
-      j_arr_days.push_back(j_obj);
-    }
-
-    j_arr_days.push_back(j_obj);
-
-    j_obj =
-        {
-            {"month", "08"},
-            {"days", j_arr_days}};
-    j_arr_months.push_back(j_obj);
-
-    j_obj =
-        {
-            {"month", "09"},
-            {"days", j_arr_days}};
-    j_arr_months.push_back(j_obj);
-
-    j_obj =
-        {
-            {"year", "2023"},
             {"months", j_arr_months}};
     j_arr_years.push_back(j_obj);
 

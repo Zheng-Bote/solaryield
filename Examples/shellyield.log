@@ -1,6 +1,0 @@
-﻿2023-11-01 11:24:38.750 INFO  [33414] [main@141] started: output/shellyield-0.3.0
-2023-11-01 11:24:38.750 INFO  [33414] [main@144] Inputfile: Examples/GH_Solar_0108202331082023_consumption.csv
-2023-11-01 11:24:38.759 INFO  [33414] [main@166] OK: Examples/new.csv
-2023-11-01 14:51:59.550 INFO  [49968] [main@139] started: output/shellyield-1.0.0
-2023-11-01 14:51:59.551 INFO  [49968] [main@142] OK: Inputfile: Examples/GH_Solar_0108202331082023_consumption.csv
-2023-11-01 14:51:59.553 INFO  [49968] [main@180] OK: Outputfile: Examples/new.json

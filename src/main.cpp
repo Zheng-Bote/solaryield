@@ -56,10 +56,11 @@ SETUP:        Debug:
 
 HISTORY:
 Version | Date       | Developer | Comments
---------|------------|-----------|------------------------------------
-1.0.0   | 2023-10-28 | RZheng    | created                            |
-1.0.1   | 2023-11-01 | RZheng    | JSON modified                      |
-2.0.0   | 2024-04-20 | RZheng    | JSON modified                      |
+--------|------------|-----------|------------------------------------------------|
+1.0.0   | 2023-10-28 | RZheng    | created                                        |
+1.0.1   | 2023-11-01 | RZheng    | JSON modified                                  |
+2.0.0   | 2024-04-20 | RZheng    | JSON modified                                  |
+3.0.0   | 2024-04-21 | RZheng    | new input format due to Shelly firmware update |
 */
 
 #include <iostream>
@@ -76,7 +77,7 @@ Version | Date       | Developer | Comments
 
 using namespace std;
 
-const std::string VERSION = "2.0.0";
+const std::string VERSION = "3.0.0";
 
 // happy coding ^_^
 
@@ -178,7 +179,7 @@ int main(int argc, char *argv[])
 
     std::string jsonOutFile = result["writejson"].as<std::string>();
     // if (shellyData->writeJson(mapKeys, jsonOutFile))
-    if (shellyData->writeNewJson3(mapKeys, jsonOutFile))
+    if (shellyData->writeJson(mapKeys, jsonOutFile))
     {
       PLOG_INFO << "OK: Outputfile: " << jsonOutFile;
       exit(EXIT_SUCCESS);

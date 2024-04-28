@@ -41,7 +41,7 @@ read and consolidate Shelly Plug consumption.csv
 ### VERSION:
 
 <span id="version"></span>
-2.0.0
+3.0.0
 
 ### DESC:
 
@@ -274,6 +274,8 @@ gcc version 12.3.0 (Ubuntu 12.3.0-1ubuntu1~22.04)
 
 - example Graph:
 
+see [https://github.com/Zheng-Bote/solargraph](Angular webapp to visualize ShellYield json)
+
 <img src="https://raw.githubusercontent.com/Zheng-Bote/solaryield/main/Examples/graph.png"  width="100%" height="auto" />
 
 <p align="right">(<a href="#top">back to top</a>)</p>
@@ -282,11 +284,12 @@ gcc version 12.3.0 (Ubuntu 12.3.0-1ubuntu1~22.04)
 
 <span id="history"></span>
 
-> | Version | Date       | Developer | Comments      |
-> | ------- | ---------- | --------- | ------------- |
-> | 1.0.0   | 2023-10-28 | RZheng    | created       |
-> | 1.0.1   | 2023-11-01 | RZheng    | JSON modified |
-> | 2.0.0   | 2024-04-20 | RZheng    | JSON modified |
+> | Version | Date       | Developer | Comments                                       |
+> | ------- | ---------- | --------- | ---------------------------------------------- |
+> | 1.0.0   | 2023-10-28 | RZheng    | created                                        |
+> | 1.0.1   | 2023-11-01 | RZheng    | JSON modified                                  |
+> | 2.0.0   | 2024-04-20 | RZheng    | JSON modified                                  |
+> | 3.0.0   | 2024-04-21 | RZheng    | new input format due to Shelly firmware update |
 
 ## Contributing
 
