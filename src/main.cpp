@@ -179,7 +179,7 @@ int main(int argc, char *argv[])
 
     std::string jsonOutFile = result["writejson"].as<std::string>();
     // if (shellyData->writeJson(mapKeys, jsonOutFile))
-    if (shellyData->writeJson(mapKeys, jsonOutFile))
+    if (shellyData->writeJson(mapKeys, jsonOutFile, singleFile))
     {
       PLOG_INFO << "OK: Outputfile: " << jsonOutFile;
       exit(EXIT_SUCCESS);

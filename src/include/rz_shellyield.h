@@ -11,11 +11,12 @@
 #include <iomanip>
 #include <ctime>
 #include <list>
+#include <string_view>
 
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
 
-/* 3.0.0 */
+/* 3.1.0 */
 
 class ShellyYield
 {
@@ -37,7 +38,8 @@ public:
   virtual void displayMap(std::map<std::string, float> &mapKeys);
 
   virtual bool writeCSV(std::map<std::string, float> &mapKeys, std::string pathToFile);
-  bool writeJson(std::map<std::string, float> &mapKeys, std::string &pathToFile);
+  bool writeJson(std::map<std::string, float> &mapKeys, std::string &pathToFile, std::string &singleFile);
+  virtual std::string mapFileName(std::string filename);
 
   virtual std::string &ltrim(std::string &s);
   virtual std::string &rtrim(std::string &s);

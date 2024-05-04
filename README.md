@@ -41,7 +41,7 @@ read and consolidate Shelly Plug consumption.csv
 ### VERSION:
 
 <span id="version"></span>
-3.0.0
+3.1.0
 
 ### Status
 
@@ -301,7 +301,8 @@ see <a href="https://github.com/Zheng-Bote/solargraph" alt="solargraph" title="h
 > | 1.0.0   | 2023-10-28 | RZheng    | created                                        |
 > | 1.0.1   | 2023-11-01 | RZheng    | JSON modified                                  |
 > | 2.0.0   | 2024-04-20 | RZheng    | JSON modified                                  |
-> | 3.0.0   | 2024-04-21 | RZheng    | new input format due to Shelly firmware update |
+> | 3.0.0   | 2024-04-28 | RZheng    | new input format due to Shelly firmware update |
+> | 3.1.0   | 2024-05-04 | RZheng    | JSON output enriched                           |
 
 ## Contributing
 
