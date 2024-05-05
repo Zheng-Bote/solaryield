@@ -41,7 +41,7 @@ read and consolidate Shelly Plug consumption.csv
 ### VERSION:
 
 <span id="version"></span>
-3.1.0
+4.0.0
 
 ### Status
 
@@ -86,6 +86,14 @@ Source: https://github.com/SergiusTheBest/plog
 
 License: MIT
 
+#### nlohmann/json
+
+JSON for Modern C++
+
+Source: https://github.com/nlohmann/json
+
+License: MIT
+
 ### SYNTAX:
 
 <span id="syntax"></span>
@@ -97,14 +105,22 @@ Usage:
 ```
 
 ```
-ShellYield [OPTION...]
-  -c, --csv arg     <pathTo/inputfile.csv>
-  -l, --list        list values
-  --writecsv arg    <pathTo/outputfile.csv>
-  --writejson arg   <pathTo/outputfile.json>
-  --writelog arg    <pathTo/logfile.log>
-  -h, --help        Print usage
-  -v, --version     Version
+shellyield -h
+collect Shelly yields
+Usage:
+  output/shellyield [OPTION...]
+
+  -c, --csv arg        <pathTo/inputfile.csv>
+  -l, --list           list values
+      --writecsv arg   output to clean csv. If "": <yyyy-mm>_<1st_part_of_csvInputFile>.csv (default: "")
+      --csvout arg     <path to csv output folder>. If "": ./csv_out/ (default: "")
+      --writejson arg  output to JSON. If "": <yyyy-mm>_<1st_part_of_csvInputFile>.json (default: "")
+      --jsonout arg    <path to JSON output folder>. If "": ./json_out/ (default: "")
+      --logpath arg    <pathToLogfile>. if "": ./log (default: "")
+  -h, --help           Print usage
+  -v, --version        Version
+      --fullversion    Full Version
+      --program        Program
 ```
 
 <p align="right">(<a href="#top">back to top</a>)</p>
@@ -265,7 +281,10 @@ gcc version 12.3.0 (Ubuntu 12.3.0-1ubuntu1~22.04)
                             {"day":"03","val":727.3200073242188},
                             {"day":"04","val":967.3699951171875}
                         ],
-                    "month":"11"
+                    "month": "01",
+                    "month_name": "January",
+                    "name": "garten",
+                    "watt_per_month": 1865.679931640625
                 }
             ],
         "year":"2024"
@@ -303,6 +322,7 @@ see <a href="https://github.com/Zheng-Bote/solargraph" alt="solargraph" title="h
 > | 2.0.0   | 2024-04-20 | RZheng    | JSON modified                                  |
 > | 3.0.0   | 2024-04-28 | RZheng    | new input format due to Shelly firmware update |
 > | 3.1.0   | 2024-05-04 | RZheng    | JSON output enriched                           |
+> | 4.0.0   | 2024-05-05 | RZheng    | changed to object oriented due to enhancements |
 
 ## Contributing
 

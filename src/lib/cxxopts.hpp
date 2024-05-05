@@ -230,10 +230,10 @@ stringAppend(String& s, Iterator begin, Iterator end)
 }
 
 inline
-std::size_t
+size_t
 stringLength(const String& s)
 {
-  return s.length();
+  return static_cast<size_t>(s.length());
 }
 
 inline
@@ -337,13 +337,8 @@ empty(const std::string& s)
 namespace cxxopts {
 
 namespace {
-#ifdef _WIN32
 CXXOPTS_LINKONCE_CONST std::string LQUOTE("\'");
 CXXOPTS_LINKONCE_CONST std::string RQUOTE("\'");
-#else
-CXXOPTS_LINKONCE_CONST std::string LQUOTE("‘");
-CXXOPTS_LINKONCE_CONST std::string RQUOTE("’");
-#endif
 } // namespace
 
 // GNU GCC with -Weffc++ will issue a warning regarding the upcoming class, we
@@ -1498,7 +1493,7 @@ CXXOPTS_DIAGNOSTIC_POP
 class KeyValue
 {
   public:
-  KeyValue(std::string key_, std::string value_)
+  KeyValue(std::string key_, std::string value_) noexcept
   : m_key(std::move(key_))
   , m_value(std::move(value_))
   {

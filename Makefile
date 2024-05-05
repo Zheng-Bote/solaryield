@@ -4,8 +4,7 @@
 #
 
 # define the Cpp compiler to use
-#CXX = g++
-CXX = g++-12
+CXX = g++
 
 # define any compile-time flags
 DEBUG_FLAGS = -g3 -O0 -m64 -Wall -Wextra -Wpedantic -Wshadow -Wconversion
@@ -31,10 +30,10 @@ OUTPUT	:= output
 SRC		:= src
 
 # define include directory
-INCLUDE	:= include
+INCLUDE	:= $(SRC)/include
 
 # define lib directory
-LIB		:= lib
+LIB		:= $(SRC)/lib
 
 ifeq ($(OS),Windows_NT)
 MAIN	:= $(EXEFILE).exe
@@ -102,6 +101,9 @@ clean:
 	$(RM) $(OUTPUTMAIN)
 	$(RM) $(call FIXPATH,$(OBJECTS))
 	$(RM) $(call FIXPATH,$(DEPS))
+	$(RM) $(call FIXPATH,./csv_out/*)
+	$(RM) $(call FIXPATH,./json_out/*)
+	$(RM) $(call FIXPATH,./log/$(EXEFILE)/*)
 	@echo Cleanup complete!
 
 run: all

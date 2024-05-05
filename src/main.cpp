@@ -1,193 +1,208 @@
-/*
-TITLE:        ShellYield
-
-BRIEF:        read and consolidate Shelly Plug S consumption.csv
-
-VERSION:      2.0.0
-
-DESC:         C++20 program to read and consolidate Shelly Plug S consumption.csv.
-              Output to terminal, CSV or JSON file.
-              Several entries for the same day will be accumulated.
-
-AUTHOR:       ZHENG Robert
-
-SOURCE:       https://github.com/Zheng-Bote/solaryield
-
-DEPENDENCIES: cxxopts
-              a lightweight C++ option parser library, supporting the standard GNU style syntax for options.
-              Source: https://github.com/jarro2783/cxxopts
-              License: gpl2
-
-              plog
-              Plog - portable, simple and extensible C++ logging library
-              Source: https://github.com/SergiusTheBest/plog
-              License: MIT
-
-SYNTAX:       Usage:
-              ShellYield [OPTION...]
-
-              -c, --csv arg     <pathTo/inputfile.csv>
-              -l, --list        list values
-              --writecsv arg    <pathTo/outputfile.csv>
-              --writejson arg   <pathTo/outputfile.json>
-              -h, --help        Print usage
-              -v, --version     Version
-
-EXAMPLES:     ./shellyield --csv GH_Solar_0108202331082023_consumption.csv --writecsv ./new.csv
-              ./shellyield --csv GH_Solar_0108202331082023_consumption.csv --writejson ./new.json
-
-RETURNS:      0 => OK
-              1 => NOK
-
-SETUP:        Debug:
-              g++-12 -std=c++20 -g3 -O0 -m64 -Wall -Wextra -Wpedantic -Wshadow -Wconversion -c -MMD src/main.cpp  -o src/main.o
-              g++-12 -std=c++20 -g3 -O0 -m64 -Wall -Wextra -Wpedantic -Wshadow -Wconversion  -o output/shellyield src/main.o src/include/rz_shellyield.o
-
-              Release:
-              g++-12 -std=c++20 -O3 -m64 -Wall -Wextra -Wpedantic -Wshadow -Wconversion -c -MMD src/main.cpp  -o src/main.o
-              g++-12 -std=c++20 -O3 -m64 -Wall -Wextra -Wpedantic -Wshadow -Wconversion -c -MMD src/include/rz_shellyield.cpp  -o src/include/rz_shellyield.o
-              g++-12 -std=c++20 -O3 -m64 -Wall -Wextra -Wpedantic -Wshadow -Wconversion  -o output/shellyield src/main.o src/include/rz_shellyield.o
-
-              Binary:
-              compiled on:
-              Linux beelink 5.15.0-87-generic #97-Ubuntu SMP Mon Oct 2 21:09:21 UTC 2023 x86_64 x86_64 x86_64 GNU/Linux
-              Compiler/Linker:
-              gcc version 12.3.0 (Ubuntu 12.3.0-1ubuntu1~22.04)
-
-HISTORY:
-Version | Date       | Developer | Comments
---------|------------|-----------|------------------------------------------------|
-1.0.0   | 2023-10-28 | RZheng    | created                                        |
-1.0.1   | 2023-11-01 | RZheng    | JSON modified                                  |
-2.0.0   | 2024-04-20 | RZheng    | JSON modified                                  |
-3.0.0   | 2024-04-21 | RZheng    | new input format due to Shelly firmware update |
-*/
-
 #include <iostream>
-#include <filesystem>
-#include <string>
-
 #include <plog/Log.h>
 #include <plog/Initializers/RollingFileInitializer.h>
 #include <plog/Formatters/TxtFormatter.h>
 #include <plog/Appenders/ColorConsoleAppender.h>
 
+#include <iterator>
+
 #include "lib/cxxopts.hpp"
-#include "include/rz_shellyield.h"
 
-using namespace std;
-
-const std::string VERSION = "3.0.0";
-
-// happy coding ^_^
-
-std::string getFilename(char &argv0)
-{
-  return std::filesystem::path(&argv0).stem();
-}
+#include "include/rz_main.h"
+#include "include/rz_datetime.h"
+#include "include/rz_dirs.h"
+#include "rz_files.h"
+#include "rz_shelly.h"
 
 int main(int argc, char *argv[])
 {
-  std::string singleFile = "";
-  std::string logFile = getFilename(*argv[0]) + ".log";
+  std::string csvInputFile = "";
+  std::string csvOutputPath = "./csv_out/";   // default
+  std::string csvOutputFile = "";             // <yyyy-mm>_<1st_part_of_csvInputFile>.csv
+  std::string jsonOutputPath = "./json_out/"; // default
+  std::string jsonOutputFile = "";            // <yyyy-mm>_<1st_part_of_csvInputFile>.csv
+  std::string logFile = "";                   // <yyyy-mm>_<program>.log
+  std::string logFilePath = "./log/";         // default "./log/<program>"
+  std::map<std::string, float> mapKeys = {};  // map Shelly date and value
+  std::vector<std::string> yyyymm{};          // year and month of mapKey
+  std::vector<std::string> dummy{};           // ragpicker
 
-  cxxopts::Options options("ShellYield", "collect Shelly yields");
-  options.add_options()("c,csv", "<pathTo/inputfile.csv>", cxxopts::value<std::string>())("l,list", "list values")("writecsv", "<pathTo/outputfile.csv>", cxxopts::value<std::string>())("writejson", "<pathTo/outputfile.json>", cxxopts::value<std::string>())("writelog", "<pathTo/logfile.log>", cxxopts::value<std::string>())("h,help", "Print usage")("v,version", "Version");
+  cxxopts::Options options(argv[0], "collect Shelly yields");
+  options.add_options()(
+      "c,csv", "<pathTo/inputfile.csv>", cxxopts::value<std::string>())("l,list", "list values")("writecsv", "output to clean csv. If \"\": <yyyy-mm>_<1st_part_of_csvInputFile>.csv", cxxopts::value<std::string>()->default_value(""))("csvout", "<path to csv output folder>. If \"\": ./csv_out/", cxxopts::value<std::string>()->default_value(""))("writejson", "output to JSON. If \"\": <yyyy-mm>_<1st_part_of_csvInputFile>.json", cxxopts::value<std::string>()->default_value(""))("jsonout", "<path to JSON output folder>. If \"\": ./json_out/", cxxopts::value<std::string>()->default_value(""))("logpath", "<pathToLogfile>. if \"\": ./log", cxxopts::value<std::string>()->default_value(""))("h,help", "Print usage")("v,version", "Version")("fullversion", "Full Version")("program", "Program");
 
   auto result = options.parse(argc, argv);
+  RZ_Main *main = new RZ_Main();
 
   if (result.count("help"))
   {
     std::cout << options.help() << std::endl;
-    exit(0);
+    exit(EXIT_SUCCESS);
   }
   if (result.count("version"))
   {
-    std::cout << argv[0] << "-" << VERSION << std::endl;
-    exit(0);
+    std::cout << "v" << main->getVersion() << std::endl;
+    exit(EXIT_SUCCESS);
   }
+  if (result.count("fullversion"))
+  {
+    std::cout << main->getFullVersion() << std::endl;
+    exit(EXIT_SUCCESS);
+  }
+  if (result.count("program"))
+  {
+    std::cout << argv[0] << std::endl;
+    exit(EXIT_SUCCESS);
+  }
+
   if (result.count("csv") && result["csv"].as<std::string>().length() >= 1)
   {
-    singleFile = result["csv"].as<std::string>();
+    csvInputFile = result["csv"].as<std::string>();
+    if (!rz_files::checkFileExtension(csvInputFile, ".csv"))
+    {
+      std::cout << "ERROR: file is not a csv: " << csvInputFile << std::endl;
+      exit(EXIT_FAILURE);
+    }
+    if (!rz_files::isReadAble(csvInputFile))
+    {
+      std::cout << "ERROR: csv file not readable: " << csvInputFile << std::endl;
+      exit(EXIT_FAILURE);
+    }
   }
   else
   {
     std::cout << "missing inputfile\n"
               << std::endl;
     std::cout << options.help() << std::endl;
-    exit(1);
+    exit(EXIT_FAILURE);
   }
 
-  if (result.count("writelog"))
+  if (result.count("logpath") && result["logpath"].as<std::string>().length() >= 1)
   {
-    logFile = result["writelog"].as<std::string>();
+    logFilePath = result["logpath"].as<std::string>();
   }
+  logFilePath.append(main->getProgName() + "/");
+  logFile = rz_datetime::getCurrentDateTime("YYYY-MM");
+  logFile.append("_");
+  logFile.append(main->getProgName());
+  logFile.append(".log");
 
-  if (argc <= 1)
+  if (!rz_dirs::dir_exist(logFilePath))
   {
-    std::cout << "missing inputfile\n"
-              << std::endl;
-    std::cout << options.help() << std::endl;
-    exit(1);
+    if (!rz_dirs::create_directory(logFilePath))
+    {
+      std::cout << "ERROR: create logfile path failed: " << logFilePath << std::endl;
+      exit(EXIT_FAILURE);
+    }
   }
+  logFilePath.append(logFile);
 
   // ok-la, let's do something
 
-  plog::init(plog::debug, logFile.c_str(), 5000, 3);
-
+  // init logging
+  plog::init(plog::verbose, logFilePath.c_str(), 5000, 3);
   plog::ColorConsoleAppender<plog::TxtFormatter> consoleAppender;
   plog::get()->addAppender(&consoleAppender);
+  PLOG_INFO << "started: " << rz_dirs::getCanonicalPath(argv[0]) << "-" << main->getVersion();
+  PLOG_INFO << "logging to: " << rz_dirs::getCanonicalPath(logFilePath);
 
-  ShellyYield *shellyData = new ShellyYield(&singleFile);
-  PLOG_INFO << "started: " << argv[0] << "-" << VERSION;
-  if (shellyData->checkFileExtension(&singleFile, ".csv"))
+  // happy coding \^o^/
+  if (!rz_shelly::parseFileToMapKey(mapKeys, csvInputFile))
   {
-    PLOG_INFO << "OK: Inputfile: " << shellyData->getInFile();
-  }
-  else
-  {
-    PLOG_ERROR << "NOK: Inputfile not a .csv: " << shellyData->getInFile();
+    PLOG_ERROR << "Error parsing " << csvInputFile;
     exit(EXIT_FAILURE);
   }
-  std::map<std::string, float> mapKeys = {};
-
-  shellyData->parseFileToMapKey(mapKeys, singleFile);
 
   if (result.count("list"))
   {
-    shellyData->displayMap(mapKeys);
+    PLOG_INFO << "display Map of: " << csvInputFile;
+    rz_shelly::displayMap(mapKeys);
   }
 
   if (result.count("writecsv"))
   {
-
-    std::string csvOutFile = result["writecsv"].as<std::string>();
-    if (shellyData->writeCSV(mapKeys, csvOutFile))
+    // csvOutputPath
+    if (result["csvout"].as<std::string>().length() >= 1)
     {
-      PLOG_INFO << "OK: Outputfile: " << csvOutFile;
-      exit(EXIT_SUCCESS);
+      csvOutputPath = result["csvout"].as<std::string>();
+    }
+    if (!rz_dirs::dir_exist(csvOutputPath))
+    {
+      if (!rz_dirs::create_directory(csvOutputPath))
+      {
+        PLOG_ERROR << "ERROR: create csv out path failed: " << csvOutputPath;
+        exit(EXIT_FAILURE);
+      }
+    }
+
+    //  csvOutputFile given
+    if (result["writecsv"].as<std::string>().length() >= 1)
+    {
+      csvOutputPath.append(result["writecsv"].as<std::string>());
     }
     else
     {
-      PLOG_ERROR << "NOK: Outputfile: " << csvOutFile;
+      auto it = mapKeys.begin();
+      std::advance(it, 0);
+      yyyymm = {};
+      yyyymm = {rz_datetime::splitDateTime(it->first, '-')};
+      dummy = {};
+      dummy = {rz_datetime::splitDateTime(rz_files::getOnlyFilename(csvInputFile), '_')};
+      csvOutputPath.append(yyyymm.at(0) + "-" + yyyymm.at(1) + "_" + dummy.at(0) + ".csv");
+    }
+    PLOG_INFO << "csvOutputFile: " << csvOutputPath;
+
+    if (!rz_shelly::writeCSV(mapKeys, csvOutputPath))
+    {
+      PLOG_ERROR << "Error writing CSV out: " << csvOutputPath;
       exit(EXIT_FAILURE);
     }
+    PLOG_INFO << "Successful written CSV out: " << csvOutputPath;
   }
 
   if (result.count("writejson"))
   {
-
-    std::string jsonOutFile = result["writejson"].as<std::string>();
-    // if (shellyData->writeJson(mapKeys, jsonOutFile))
-    if (shellyData->writeJson(mapKeys, jsonOutFile, singleFile))
+    // csvOutputPath
+    if (result["jsonout"].as<std::string>().length() >= 1)
     {
-      PLOG_INFO << "OK: Outputfile: " << jsonOutFile;
-      exit(EXIT_SUCCESS);
+      jsonOutputPath = result["jsonout"].as<std::string>();
+    }
+    if (!rz_dirs::dir_exist(jsonOutputPath))
+    {
+      if (!rz_dirs::create_directory(jsonOutputPath))
+      {
+        PLOG_ERROR << "ERROR: create json out path failed: " << jsonOutputPath;
+        exit(EXIT_FAILURE);
+      }
+    }
+
+    //  jsonOutputFile given
+    if (result["writejson"].as<std::string>().length() >= 1)
+    {
+      jsonOutputPath.append(result["writejson"].as<std::string>());
     }
     else
     {
-      PLOG_ERROR << "NOK: Outputfile: " << jsonOutFile;
+      auto it = mapKeys.begin();
+      std::advance(it, 0);
+      yyyymm = {};
+      yyyymm = {rz_datetime::splitDateTime(it->first, '-')};
+      dummy = {};
+      dummy = {rz_datetime::splitDateTime(rz_files::getOnlyFilename(csvInputFile), '_')};
+      jsonOutputPath.append(yyyymm.at(0) + "-" + yyyymm.at(1) + "_" + dummy.at(0) + ".json");
+    }
+    PLOG_INFO << "jsonOutputFile: " << jsonOutputPath;
+
+    if (!rz_shelly::writeJson(mapKeys, jsonOutputPath, dummy.at(0)))
+    {
+      PLOG_ERROR << "Error writing JSON out: " << jsonOutputPath;
       exit(EXIT_FAILURE);
     }
+    PLOG_INFO << "Successful written JSON out: " << jsonOutputPath;
   }
+
+  // the end
+  PLOG_INFO
+      << "ended: " << rz_dirs::getCanonicalPath(argv[0]) << "-" << main->getVersion();
+  exit(EXIT_SUCCESS);
 }
