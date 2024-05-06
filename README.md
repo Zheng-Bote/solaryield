@@ -129,26 +129,44 @@ Usage:
 
 <span id="examples"></span>
 
+- list csv entries
+
+```
+./shellyield --csv GH_Solar_0108202331082023_consumption.csv -l
+```
+
 - cleanup to csv
 
 ```
-./shellyield --csv GH_Solar_0108202331082023_consumption.csv --writecsv ./new.csv
+./shellyield --csv GH_Solar_0108202331082023_consumption.csv --writecsv ""
 ```
 
 - cleanup to json
 
 ```
-./shellyield --csv GH_Solar_0108202331082023_consumption.csv --writejson ./new.json
+./shellyield --csv GH_Solar_0108202331082023_consumption.csv --writejson new.json
 ```
 
 - add several csv (eg. several Shelly Plugs from same month) to clean csv and cumulated json
 
 ```
-./shellyield --csv GH_Solar-1_0108202331082023_consumption.csv --writecsv ./GH_Solar_2023.csv
+./shellyield --csv GH_Solar-1_0108202331082023_consumption.csv --writecsv GH_Solar_2023.csv
 
-./shellyield --csv GH_Solar-2_0108202331082023_consumption.csv --writecsv ./GH_Solar_2023.csv
+./shellyield --csv GH_Solar-2_0108202331082023_consumption.csv --writecsv GH_Solar_2023.csv
 
-./shellyield --csv ./GH_Solar_2023.csv --writejson ./GH_Solar_2023.json
+./shellyield --csv ./GH_Solar_2023.csv --writejson GH_Solar_2023.json
+```
+
+- default output file but custom output path
+
+```
+./shellyield --csv ./GH_Solar_2023.csv --writejson "" --jsonout /data/sol/out/
+```
+
+- custom output file but default output path
+
+```
+./shellyield --csv ./GH_Solar_2023.csv --writecsv my_output.csv --csvout ""
 ```
 
 ### RETURNS:
@@ -200,7 +218,7 @@ Linux beelink 5.15.0-87-generic #97-Ubuntu SMP Mon Oct 2 21:09:21 UTC 2023 x86_6
 Compiler/Linker:
 
 ```
-gcc version 12.3.0 (Ubuntu 12.3.0-1ubuntu1~22.04)
+g++ (gcc) version 12.3.0 (Ubuntu 12.3.0-1ubuntu1~22.04)
 ```
 
 <p align="right">(<a href="#top">back to top</a>)</p>
@@ -237,33 +255,6 @@ gcc version 12.3.0 (Ubuntu 12.3.0-1ubuntu1~22.04)
 2023-08-02,2596.500
 2023-08-03,3572.160
 2023-08-04,1889.210
-2023-08-05,682.140
-2023-08-06,1757.170
-2023-08-07,2030.430
-2023-08-08,2830.230
-2023-08-09,845.770
-2023-08-10,3496.440
-2023-08-11,3649.010
-2023-08-12,2967.770
-2023-08-13,3179.720
-2023-08-14,3414.040
-2023-08-15,1521.920
-2023-08-16,1511.120
-2023-08-17,3413.260
-2023-08-18,3525.140
-2023-08-19,3394.840
-2023-08-20,3577.620
-2023-08-21,3511.590
-2023-08-22,2656.190
-2023-08-23,3377.280
-2023-08-24,3376.590
-2023-08-25,2267.050
-2023-08-26,2062.610
-2023-08-27,600.000
-2023-08-28,743.910
-2023-08-29,693.810
-2023-08-30,2048.360
-2023-08-31,2043.190
 ```
 
 - example output (json):
@@ -281,13 +272,13 @@ gcc version 12.3.0 (Ubuntu 12.3.0-1ubuntu1~22.04)
                             {"day":"03","val":727.3200073242188},
                             {"day":"04","val":967.3699951171875}
                         ],
-                    "month": "01",
-                    "month_name": "January",
+                    "month": "08",
+                    "month_name": "August",
                     "name": "garten",
                     "watt_per_month": 1865.679931640625
                 }
             ],
-        "year":"2024"
+        "year":"2023"
     }
 ]
 ```

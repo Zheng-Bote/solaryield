@@ -4,7 +4,7 @@
 #
 
 # define the Cpp compiler to use
-CXX = g++
+CXX = g++-12
 
 # define any compile-time flags
 DEBUG_FLAGS = -g3 -O0 -m64 -Wall -Wextra -Wpedantic -Wshadow -Wconversion
